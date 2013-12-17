@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2013.1 (Build 443U)" ts="2013-10-01 18:22:19">
+<Class name="iscapi.Signer">
+<Description>
+Функции для работы с крипто-провайдерами через MS CAPI</Description>
+<Super>%RegisteredObject</Super>
+<TimeChanged>63095,54910.929709</TimeChanged>
+<TimeCreated>62647,62739.879273</TimeCreated>
+
+<Method name="LoadDLL">
+<Description>
+Загрузка DLL
+		dllPath			- полный путь к библиотеке</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dllPath:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	if (dllPath = "") {
+		w "Please set dllPath equal to path to the ISCAPI.dll"
+		q $$$ERROR($$$GeneralError, "No path to iscapi.dll is provided")
+	}
+	try {
+		d $zf(-3, dllPath)
+	}
+	catch (ex) {
+		s result = ex.AsStatus()	
+	}
+	
+	if (result=1)
+		{w "DLL from "_dllPath_" was loaded"}
+	else
+		{w "Cannot load DLL from "_dllPath}
+	
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="UnloadDLL">
+<Description>
+Выгрузка DLL</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[	d $zf(-3, "")
+]]></Implementation>
+</Method>
+
+<Method name="Init">
+<Description>
+Инициализация крипто-провайдера.
+		provType		- тип провайдера (VipNet=2, CryptoPro=75)
+		algId			- используемый алгоритм (32798)
+		containerName 	- полное имя контейнера с ключами
+		pin				- пароль к контейнеру (если не указан, CSP будет запршивать его в интерактивном режиме, что не всегда возможно)
+		providerName	- имя крипто-провайдера</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>provType=75,algId=32798,containerName:%String,pin:%String="111111",providerName:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	try {
+		d $zf(-3, "", "Init", provType, algId, containerName, pin, providerName)
+	}
+	catch (ex) {
+		s result = ex.AsStatus()	
+	}
+	
+	if (result=1)
+		{w "CSP was successfully initialized"}
+	else
+		{w "Error during CSP initialization"}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="InitLogger">
+<Description>
+Инициализация протоколирования.
+	logFileName 	- имя файла протокола. Должно быть право на запись.
+		logLevel 		- уровень протоколирования
+			0 - ничего
+			1 - только ошибки
+			2 - все сообщения
+		logTargets		- устройства, в которые нужно писать протокол
+			0 - не писать никуда
+			1 - писать в файл
+			2 - выводить на консоль
+			3 - файл и консоль</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>logFileName:%String="c:\iscapi.log",logLevel:%Integer=2,logTargets:%Integer=3</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	try {
+		d $zf(-3, "", "InitLogger", logFileName, logLevel, logTargets)
+	}
+	catch ex {
+		s result = ex.AsStatus()
+	}
+	
+	if (result=1)
+		{w "Logger was successfully initialized"}
+	else
+		{w "Error during Logger initialization"}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="HashData">
+<Description>
+Хеширование порции данных.
+Можно вызывать в цикле для хеширования потока по чанкам, каждая порция данных будет прибавляться к хешу.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dataPortion:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	try {
+		d $zf(-3, "", "HashData", dataPortion)
+	}
+	catch ex {
+		s result = ex.AsStatus()
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="HashFile">
+<Description>
+Хеширование файла.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fileName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	try {
+		d $zf(-3, "", "HashFile", fileName)
+	}
+	catch ex {
+		s result = ex.AsStatus()
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="GetHashValue">
+<Description>
+Возвращает значение хеша.
+После вызова хеш сохраняется</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s result = ""
+	//s temp = ""
+	try {
+		s result = $zf(-3, "", "GetHashValue", "")
+	}
+	catch ex {
+		w "GHV exception", !
+		zw ex
+		s result = ""
+	}
+	w "GHV result is:", result, !
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="ExportUserKey">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s result = ""
+	try {
+		s result = $zf(-3, "", "ExportUserKey", "")
+	}
+	catch ex {
+		s result = ""
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="SignNewHash">
+<Description>
+Экспорт открытого ключа.
+Подпись хеша.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dataPortion:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s result = ""
+	try {
+		s result = $zf(-3, "", "SignNewHash", dataPortion, "")
+	}
+	catch ex {
+		s result = ""
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="SignCurrentHash">
+<Description>
+Подпись текущего объекта хеша.</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s result = ""
+	try {
+		s result = $zf(-3, "", "SignCurrentHash", "")
+		
+	}
+	catch ex {
+		s result = ""
+	}
+	w "Signature recieved: ",result,!
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="VerifyHash">
+<Description>
+Проверка подписи хэша.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>hash:%String,sign:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	s result = 0
+	try {
+		s result = $zf(-3, "", "VerifyHash", hash, sign, 0)
+	}
+	catch ex {
+		s result = 0
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="VerifyHashByKey">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>hash:%String,sign:%String,pubKey:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	s result = 0
+	try {
+		s result = $zf(-3, "", "VerifyHashByKey", hash, sign, pubKey, 0)
+	}
+	catch ex {
+		s result = 0
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="VerifySignature">
+<Description>
+Проверка подписи хэша по открытому ключу.
+Проверка подписи данных</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dataPortion:%String,sign:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	s result = 0
+	try {
+		s result = $zf(-3, "", "VerifySignature", dataPortion, sign, 0)
+	}
+	catch ex {
+		s result = 0
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="ReleaseAll">
+<Description>
+Освобождение ресурсов и выгрузка DLL</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	s result = $$$OK
+	try {
+		d $zf(-3, "", "ReleaseAll")
+		d ..UnloadDLL()
+	}
+	catch ex {
+		s result = ex.AsStatus()
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="ByteToHex">
+<Description>
+Преобразование бинарной строки в HEX
+TODO: rewrite</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>bString:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s str = ""
+	for i=1:1:$l(bString) {
+		s hex = $zhex($ascii($e(bString, i)))
+		if ($l(hex) = 1) s hex = "0" _ hex
+		s str = str _ hex
+	}
+	q str
+]]></Implementation>
+</Method>
+
+<Method name="HexToString">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>value:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	s str = ""
+	for i=1:2:$l(value) {
+		s hex = $e(value, i, i + 1)
+		s str = str _ $c($zhex(hex))
+	}
+	
+	q str
+]]></Implementation>
+</Method>
+
+<Method name="PrintProviders">
+<Description>
+Выгрузка DLL</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+		s result = $$$OK
+	try {
+			d $zf(-3, "", "PrintProviders")
+		//d ..UnloadDLL()
+	}
+	catch ex {
+		s result = ex.AsStatus()
+	}
+	q result
+]]></Implementation>
+</Method>
+
+<Method name="Test">
+<Description>
+Тестовый прогон КриптоПро</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	s data = "123!"
+	
+	d ..LoadDLL("C:\ARTEM\ISCAPI.dll")
+	w "DLL loaded", !
+	d ..InitLogger("c:\ARTEM\iscapiL.txt", 2, 1)
+	w "Logger initialized", !	
+	d ..PrintProviders()
+	d ..Init(75, 32798, "CacheCrypt", "3396T", "Crypto-Pro GOST R 34.10-2001 Cryptographic Service Provider")
+	w "CSP initialized", !
+	d ..HashData(data)
+	w "Hash created on: ", data, !
+	
+	s hash = ..GetHashValue()	
+	w "Hash received, hash length=", $l(hash), !
+	w "Hash to base64:", !, $system.Encryption.Base64Encode(hash), !
+	w "Hash to HEX:", !, ..ByteToHex(hash), !
+	w "Hash value:", hash, !
+	
+	s sign = ..SignCurrentHash()
+	w "Hash signed, sign length=", $l(sign), !
+	w "Sign to base64:", !, $system.Encryption.Base64Encode(sign), !
+		
+	w "Sign to HEX:", !, ..ByteToHex(sign), !
+
+	s vfy = ..VerifyHash(hash, sign)
+	w "Verifying Hash signature result = ", vfy, !
+	
+	s vfy = ..VerifySignature(data, sign)
+	w "Verifying Signature by input text result = ", vfy, !
+	
+	w "Exporting User Key...",!
+	s userKey = ..ExportUserKey()
+	w "Size: ", $l(userKey), !	
+	w "UserKeyBytes: ", ..ByteToHex(userKey), !
+	
+	s vfy = ..VerifyHashByKey(hash, sign, userKey)
+	w "Verifying Hash signature ByKey result = ", vfy, !
+
+	
+	d ..ReleaseAll()
+]]></Implementation>
+</Method>
+</Class>
+
+
+</Export>
