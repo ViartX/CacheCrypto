@@ -1,0 +1,3 @@
+LIBRARY           iscapi
+EXPORTS
+    GetZFTable    @1
