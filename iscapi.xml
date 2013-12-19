@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2013.1 (Build 443U)" ts="2013-10-01 18:22:19">
 <Class name="iscapi.Signer">
 <Description>
@@ -351,7 +351,7 @@ TODO: rewrite</Description>
 	d ..InitLogger("c:\ARTEM\iscapiL.txt", 2, 1)
 	w "Logger initialized", !	
 	d ..PrintProviders()
-	d ..Init(75, 32798, "CacheCrypt", "3396T", "Crypto-Pro GOST R 34.10-2001 Cryptographic Service Provider")
+	d ..Init(75, 32798, "CacheCrypt", "", "Crypto-Pro GOST R 34.10-2001 Cryptographic Service Provider")
 	w "CSP initialized", !
 	d ..HashData(data)
 	w "Hash created on: ", data, !

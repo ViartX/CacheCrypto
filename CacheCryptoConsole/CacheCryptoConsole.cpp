@@ -384,9 +384,9 @@ void printSettings()
 // fill automaticly test data for debug purposes
 void fillTestData()
 {
-	cacheCommon->Init(75, 32798, L"CacheCrypt", L"3396T", L"Crypto-Pro GOST R 34.10-2001 Cryptographic Service Provider");	// set parameters and acquire context
+	cacheCommon->Init(75, 32798, L"CacheCrypt", L"", L"Crypto-Pro GOST R 34.10-2001 Cryptographic Service Provider");	// set parameters and acquire context
 	cacheCommon->setLogTargets(3);								// additional parameters for logging settings
-	cacheCommon->setLogFileName(L"c:\\ARTEM\\iscapi.log");		// additional parameter for file name in logging settings
+	cacheCommon->setLogFileName(L"c:\\iscapi.log");		// additional parameter for file name in logging settings
 	printSettings();
 }
 //=================================================================================================
